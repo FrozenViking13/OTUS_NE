@@ -1,0 +1,28 @@
+
+en
+conf t
+no ip domain-lookup
+hostname S2
+banner motd # Unauthorized access is strictly prohibited.#
+int vlan1
+ip address 192.168.1.12 255.255.255.0
+no shutdown
+exit
+interface fa 0/18
+no shutdown
+exit
+interface fa 0/1
+no shutdown
+exit
+service password-encryption
+enable secret class
+line con 0
+password cisco
+login
+logging  synchronous 
+end
+conf t
+line vty 0 15
+password cisco
+login
+end
