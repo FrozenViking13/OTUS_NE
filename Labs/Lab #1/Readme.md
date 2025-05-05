@@ -1,16 +1,16 @@
-#Часть 1 Часть 1. 
-##Шаг 1
-###a.
+# Часть 1  
+## Шаг 1
+### a.
 Подключаем консольный кабель в RS-232 порт PC и Console порт свитча. 
-###b. 
+### b. 
 Устанавливаем подключение к коммутатору с помощью терминала эмуляции.
 
-###Q&A
+### Q&A
 Консольный кабель при первоначальной настройке необходимо использовать по причине отсутсвия настроек сетевых интерфейсов, то есть подключение по SSH или Telnet не является возможным.
 
 
-##Шаг 2 
-###a. 
+## Шаг 2 
+### a. 
 Switch>en
 Switch#sh run
 Switch#sh running-config 
@@ -106,7 +106,7 @@ end
 
 
 
-###b.
+### b.
 Коммутатор имеет 24 порта FastEthernet
 Коммутатор имеет 2 порта Gigabit Ethernet
 line vty 0 4
@@ -115,16 +115,16 @@ line vty 5 15
  login
 
 
-16 линий 
+#### Всего 16 линий 
 
-###c.
+### c.
 Switch#show  startup-config 
 startup-config is not present
 
 Сообщение об отсутствии файла startup configuration мы получаем в виду того, что running-config еще не записан.
 
 
-###d.
+### d.
 interface Vlan1
  no ip address
 
@@ -159,7 +159,7 @@ Vlan1 выключен и имеет MAC - 00d0.bcec.d372
 
 
 
-###e.
+### e.
 
 Switch#show ip int Vlan 1
 Vlan1 is administratively down, line protocol is down
@@ -167,14 +167,14 @@ Vlan1 is administratively down, line protocol is down
 
 Vlan1 отключен
 
-###f.
+### f.
 
 Switch#
 %LINK-5-CHANGED: Interface FastEthernet0/6, changed state to up
 
 %LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/6, changed state to up
 
-###g.
+### g.
 Switch#sh ver
 Cisco IOS Software, C2960 Software (C2960-LANBASEK9-M), Version 15.0(2)SE4, RELEASE SOFTWARE (fc1)
 Technical Support: http://www.cisco.com/techsupport
@@ -249,7 +249,7 @@ Directory of flash:/
 
 2960-lanbasek9-mz.150-2.SE4.bin  - файл образа системы
 
-###h.
+### h.
 Switch#sh int fa 0/6
 FastEthernet0/6 is down, line protocol is down (disabled)
   Hardware is Lance, address is 00d0.ff27.0506 (bia 00d0.ff27.0506)
@@ -287,7 +287,7 @@ Switch(config-if)#no shutdown
 MAC - 00d0.ff27.0506 
 Full-duplex, 100Mb/s
 
-###i.
+### i.
 Switch>en
 Switch#dir flash
 Directory of flash:/
@@ -298,10 +298,10 @@ Directory of flash:/
 64016384 bytes total (59345313 bytes free)
 
 
-#Часть 2
+# Часть 2
 
-##Шаг 1
-###a.
+## Шаг 1
+### a.
 Switch#conf t
 Enter configuration commands, one per line.  End with CNTL/Z.
 Switch(config)#no ip domain-lookup
@@ -312,7 +312,7 @@ S1(config)#service password-encryption
 S1(config)#enable secret class
 S1(config)#banner motd # Unauthorized access is strictly prohibited.#
 
-###b.
+### b.
 
 S1(config)#int vlan1
 S1(config-if)#ip add
@@ -320,7 +320,7 @@ S1(config-if)#ip address 192.168.1.2 255.255.255.0
 S1(config-if)#no sh
 S1(config-if)#no shutdown 
 
-###c.
+### c.
 S1(config)#line con 0
 S1(config-line)#pasword cisco
 S1(config-line)#password cisco
@@ -329,7 +329,7 @@ S1(config-line)#logging  synchronous
 S1(config-line)#end
 S1#
 
-###d.
+### d.
 S1#conf t
 Enter configuration commands, one per line.  End with CNTL/Z.
 S1(config)#line vty 0 15
@@ -337,16 +337,16 @@ S1(config-line)#password cisco
 S1(config-line)#login 
 S1(config-line)#end
 S1#
-###Q&A
-Команда login используется для включения доступа по указанному паролю
+### Q&A
+Команда login используется для включения аутентификации. Без параметров по указанному паролю (password cisco в данном случае)
 
 
 
-#Часть 3 
+# Часть 3 
 
-##Шаг 1
+## Шаг 1
 
-###a.
+### a.
 S1#sh run
 Building configuration...
 
@@ -446,7 +446,7 @@ line vty 5 15
 !
 end
 
-###b. 
+### b. 
 S1#sh int vlan1
 Vlan1 is up, line protocol is down
   Hardware is CPU Interface, address is 00d0.bcec.d372 (bia 00d0.bcec.d372)
@@ -469,11 +469,11 @@ Vlan1 is up, line protocol is down
      563859 packets output, 0 bytes, 0 underruns
      0 output errors, 23 interface resets
      0 output buffer failures, 0 output buffers swapped out
-###Q&A
+### Q&A
 BW 100000 Kbit
 
-##Шаг 2
-###a.
+## Шаг 2
+### a.
 C:\>ping 192.168.1.10
 
 Pinging 192.168.1.10 with 32 bytes of data:
@@ -483,7 +483,7 @@ Reply from 192.168.1.10: bytes=32 time=8ms TTL=128
 Reply from 192.168.1.10: bytes=32 time=9ms TTL=128
 Reply from 192.168.1.10: bytes=32 time<1ms TTL=128
 
-###b.
+### b.
 C:\>ping 192.168.1.2 
 
 Pinging 192.168.1.2 with 32 bytes of data:
@@ -493,7 +493,7 @@ Reply from 192.168.1.2: bytes=32 time<1ms TTL=255
 Reply from 192.168.1.2: bytes=32 time<1ms TTL=255
 
 
-##Шаг 3
+## Шаг 3
 
 
 Trying 192.168.1.2 ...Open Unauthorized access is strictly prohibited.
@@ -611,10 +611,10 @@ line vty 5 15
 !
 end
 
-###Q&A
-###1.
+### Q&A
+### 1.
 Настраивать пароль vty необходима для обеспечения доступа к консоли через telnet
-###2.
+### 2.
 Необходимо использовать команду service password-encryption
 
 
