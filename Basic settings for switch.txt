@@ -2,15 +2,14 @@
 en
 conf t
 no ip domain-lookup
-hostname S2
+hostname S1
 banner motd # Unauthorized access is strictly prohibited.#
 int vlan1
-ip address 192.168.1.12 255.255.255.0
+ip address 192.168.1.11 255.255.255.0
 no shutdown
 exit
-interface fa 0/18
+interface fa 0/6
 no shutdown
-exit
 interface fa 0/1
 no shutdown
 exit
