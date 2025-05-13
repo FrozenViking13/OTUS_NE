@@ -237,7 +237,34 @@ FastEthernet0 Connection:(default port)
 ```
 - Почему PC-B получил глобальный префикс маршрутизации и идентификатор подсети, которые вы настроили на R1?
 
+Все IPv6 маршрутизаторы являются членами группы многоадресной рассылки FF02::2
+Можно убедиться заглянув в свойства настроенного интерфейса G0/0/0 :
 
+```
+R1#sh ipv6 int G0/0/0
+GigabitEthernet0/0/0 is up, line protocol is up
+  IPv6 is enabled, link-local address is FE80::1
+  No Virtual link-local address(es):
+  Global unicast address(es):
+    2001:DB8:ACAD:A::1, subnet is 2001:DB8:ACAD:A::/64
+  Joined group address(es):
+    FF02::1
+    FF02::2
+    FF02::1:FF00:1
+  MTU is 1500 bytes
+  ICMP error messages limited to one every 100 milliseconds
+  ICMP redirects are enabled
+  ICMP unreachables are sent
+  ND DAD is enabled, number of DAD attempts: 1
+  ND reachable time is 30000 milliseconds
+  ND advertised reachable time is 0 (unspecified)
+  ND advertised retransmit interval is 0 (unspecified)
+  ND router advertisements are sent every 200 seconds
+  ND router advertisements live for 1800 seconds
+  ND advertised default router preference is Medium
+  Hosts use stateless autoconfig for addresses.
+  ```
+Соответственно, маршрутизатор через RA сообщения распространяет в сети информацию о префиксе своей сети и своем LLA, который можно использовать в качестве шлюза.
 
 ## Шаг 3. Назначьте IPv6-адреса интерфейсу управления (SVI) на S1.
 
@@ -371,7 +398,10 @@ Approximate round trip times in milli-seconds:
 
 1.	Почему обоим интерфейсам Ethernet на R1 можно назначить один и тот же локальный адрес канала — FE80::1?
 
+LLA должен быть уникален в пределах канала, это позволяет использовать один LLA на разных портах маршрутизатора.
 
 2.	Какой идентификатор подсети в индивидуальном IPv6-адресе 2001:db8:acad::aaaa:1234/64?
+
+Так как длина префикса сети 64, идентификатором сети будут первые 4 хекстета, то есть идентификатор - 2001:db8:acad:0000 
 
 
