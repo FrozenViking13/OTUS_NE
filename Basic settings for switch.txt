@@ -25,3 +25,25 @@ line vty 0 15
 password cisco
 login
 end
+
+
+en
+conf t
+no ip domain-lookup
+hostname R1
+banner motd # Unauthorized access is strictly prohibited.#
+service password-encryption
+enable secret class
+line con 0
+password cisco
+login
+logging  synchronous 
+end
+conf t
+line vty 0 15
+password cisco
+login
+end
+
+
+2001:DB8:ACAD:1::3
