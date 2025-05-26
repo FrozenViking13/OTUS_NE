@@ -615,6 +615,7 @@ Fa0/1       10,20,30,1000
 ```
 S1(config)#int f0/5
 S1(config-if)#sw m t
+S1(config-if)#switchport nonegotiate
 S1(config-if)#sw t na
 S1(config-if)#sw t native vlan 1000
 S1(config-if)#sw t al
