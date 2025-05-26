@@ -540,14 +540,13 @@ S2#
  ```
 S1(config)#int f0/1
 S1(config-if)#sw m t
-S1(config-if)#switchport nonegotiate 
 S1(config-if)#
 %LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/1, changed state to down
 
 %LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/1, changed state to up
 
 %LINEPROTO-5-UPDOWN: Line protocol on Interface Vlan10, changed state to up
-
+S1(config-if)#switchport nonegotiate
 S1(config-if)#
  ```
  Аналогично повторяем для S2
