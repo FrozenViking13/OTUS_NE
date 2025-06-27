@@ -118,10 +118,6 @@ R1(config-subif)#
 
 %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0/1.100, changed state to up
 
-R1(config-subif)#enq dot1q 100
-                   ^
-% Invalid input detected at '^' marker.
-	
 R1(config-subif)#enc dot1q 100
 R1(config-subif)#ip add 192.168.1.1 255.255.255.192
 R1(config-subif)#desc
@@ -249,7 +245,7 @@ S1(config-line)#line vty 0 15
 S1(config-line)#password cisco
 S1(config-line)#login
 S1(config-line)#service password-encryption
-S1(config)#banner motd # https://author.today/content/2021/04/01/5c99ca8f168446fd9f941b26bd0ee34b.jpgwidth=750&height=500&mode=min #
+S1(config)#banner motd # Unauthorized access is strictly prohibited.#
 S1(config)#
 S1#
 S1#wr
@@ -463,7 +459,7 @@ VLAN Name                             Status    Ports
 S1#
 ```
 
-- Почему интерфейс F0/5 указан в VLAN 1?
+- Почему интерфейс F0/5 указан в VLAN 1?  
 
 Потому что vlan 1 является по умолчанию нативным и мы не конфигурировали порт f0/5
 
@@ -518,7 +514,7 @@ Port        Vlans in spanning tree forwarding state and not pruned
 Fa0/5       100,200,1000
 ```
 
-- Какой IP-адрес был бы у ПК, если бы он был подключен к сети с помощью DHCP?
+- Какой IP-адрес был бы у ПК, если бы он был подключен к сети с помощью DHCP?   
 Так как в сети еще нет DHCP сервера, то был бы получен адрес по APIPA, то есть 169.254.X.Y/16
 
 # Часть 2.	Настройка и проверка двух серверов DHCPv4 на R1
