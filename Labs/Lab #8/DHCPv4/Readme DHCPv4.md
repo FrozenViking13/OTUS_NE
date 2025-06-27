@@ -469,7 +469,7 @@ S1#
 ```
 S1(config)#int fa0/5
 S1(config-if)#sw m tr
-
+S1(config-if)#sw nonegotiate
 S1(config-if)#
 %LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/5, changed state to down
 
