@@ -1,23 +1,15 @@
 
 en
 conf t
+host R2
 no ip domain-lookup
 banner motd # Unauthorized access is strictly prohibited.#
-int vlan1
-ip address 192.168.1.11 255.255.255.0
-no shutdown
-exit
-interface fa 0/6
-no shutdown
-interface fa 0/5
-no shutdown
-exit
 service password-encryption
 enable secret class
 line con 0
 password cisco
 login
-logging  synchronous 
+
 end
 conf t
 line vty 0 15
@@ -28,7 +20,7 @@ end
 
 en
 conf t
-hostname S1
+hostname R1
 ip domain-name my-otus-lab.org
 crypto key generate rsa general-keys modulus 2048
 username admin privilege 15 password Adm1nP@55
@@ -37,3 +29,6 @@ transport input all
 login local
 end
 copy run st
+
+
+logging  synchronous 
