@@ -1,7 +1,7 @@
 
 en
 conf t
-host R2
+host S2
 no ip domain-lookup
 banner motd # Unauthorized access is strictly prohibited.#
 service password-encryption
@@ -9,12 +9,11 @@ enable secret class
 line con 0
 password cisco
 login
-
-end
-conf t
 line vty 0 15
 password cisco
 login
+
+
 end
 
 
@@ -32,3 +31,22 @@ copy run st
 
 
 logging  synchronous 
+
+
+vlan 20
+name Management
+vlan 30
+name Operations
+vlan 40
+name Sales
+vlan 999
+name ParkingLot
+vlan 1000
+name Native
+
+username SSHadmin secret $cisco123!
+ip domain name ccna-lab.com
+crypto key generate rsa general-keys modulus 1024
+line vty 0 4
+transport input ssh
+login local
