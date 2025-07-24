@@ -443,42 +443,169 @@ a.	Включите сервер HTTPS на R1.
 R1(config)# ip http secure-server     
 
 ```
+R1(config)#ip http secure-server
+               ^
+% Invalid input detected at '^' marker.
+	
+```
 
-```
-b.	Настройте R1 для проверки подлинности пользователей, пытающихся подключиться к веб-серверу.     
-R1(config)# ip http authentication local
-```
+CPT снова против, поэтому добавим сервер с ролью Web в схему
 
-```
+![](Lab11-Scheme2.png)
+Дадим ему IP 10.20.0.254 в 20 vlan
+
 # Часть 6. Проверка подключения
 ## Шаг 1. Настройте узлы ПК.
 Адреса ПК можно посмотреть в таблице адресации.
 ## Шаг 2. Выполните следующие тесты. Эхозапрос должен пройти успешно.
 Примечание. Возможно, вам придется отключить брандмауэр ПК для работы ping
 От	Протокол	Назначение
-PC-A	Ping	10.40.0.10
-PC-A	Ping	10.20.0.1
-PC-B	Ping	10.30.0.10
-PC-B	Ping	10.20.0.1
-PC-B	Ping	172.16.1.1
-PC-B	HTTPS	10.20.0.1
-PC-B	HTTPS	172.16.1.1
-PC-B	SSH	10.20.0.1
-PC-B	SSH	172.16.1.1
+- PC-A	Ping	10.40.0.10
+```
+C:\>ping 10.40.0.10
 
+Pinging 10.40.0.10 with 32 bytes of data:
+
+Reply from 10.40.0.10: bytes=32 time<1ms TTL=127
+Reply from 10.40.0.10: bytes=32 time=10ms TTL=127
+Reply from 10.40.0.10: bytes=32 time<1ms TTL=127
+Reply from 10.40.0.10: bytes=32 time<1ms TTL=127
+```
+- PC-A	Ping	10.20.0.1
+```
+C:\>ping 10.20.0.1
+
+Pinging 10.20.0.1 with 32 bytes of data:
+
+Reply from 10.20.0.1: bytes=32 time=13ms TTL=255
+Reply from 10.20.0.1: bytes=32 time<1ms TTL=255
+Reply from 10.20.0.1: bytes=32 time<1ms TTL=255
+Reply from 10.20.0.1: bytes=32 time<1ms TTL=255
+```
+- PC-B	Ping	10.30.0.10
+```
+C:\>ping 10.30.0.10
+
+Pinging 10.30.0.10 with 32 bytes of data:
+
+Reply from 10.30.0.10: bytes=32 time<1ms TTL=127
+Reply from 10.30.0.10: bytes=32 time<1ms TTL=127
+Reply from 10.30.0.10: bytes=32 time<1ms TTL=127
+Reply from 10.30.0.10: bytes=32 time<1ms TTL=127
+```
+
+- PC-B	Ping	10.20.0.1
+```
+C:\>ping 10.20.0.1
+
+Pinging 10.20.0.1 with 32 bytes of data:
+
+Reply from 10.20.0.1: bytes=32 time<1ms TTL=255
+Reply from 10.20.0.1: bytes=32 time<1ms TTL=255
+Reply from 10.20.0.1: bytes=32 time<1ms TTL=255
+
+```
+- PC-B	Ping	172.16.1.1
+```
+C:\>ping 172.16.1.1
+
+Pinging 172.16.1.1 with 32 bytes of data:
+
+Reply from 172.16.1.1: bytes=32 time<1ms TTL=255
+Reply from 172.16.1.1: bytes=32 time<1ms TTL=255
+Reply from 172.16.1.1: bytes=32 time<1ms TTL=255
+```
+
+- PC-B	HTTPS	10.20.0.1
+У нас поднята служба на сервере 10.20.0.254
+
+```
+C:\>ping 10.20.0.254
+
+Pinging 10.20.0.254 with 32 bytes of data:
+
+Reply from 10.20.0.254: bytes=32 time<1ms TTL=127
+Reply from 10.20.0.254: bytes=32 time<1ms TTL=127
+Reply from 10.20.0.254: bytes=32 time<1ms TTL=127
+Reply from 10.20.0.254: bytes=32 time<1ms TTL=127
+
+
+```
+![](Lab11-web.png)
+
+- PC-B	HTTPS	172.16.1.1 
+
+Лупбэк пингуется, будем считать, что тест пройден
+
+- PC-B	SSH	10.20.0.1
+```
+C:\>ssh -l admin 10.20.0.1
+
+Password: 
+```
+
+- PC-B	SSH	172.16.1.1
+```
+C:\>ssh -l admin 172.16.1.1
+
+Password: 
+```
 # Часть 7. Настройка и проверка списков контроля доступа (ACL)
 При проверке базового подключения компания требует реализации следующих политик безопасности:       
-- Политика1. Сеть Sales не может использовать SSH в сети Management (но в  другие сети SSH разрешен).         
+- Политика 1. Сеть Sales не может использовать SSH в сети Management (но в  другие сети SSH разрешен).         
 - Политика 2. Сеть Sales не имеет доступа к IP-адресам в сети Management с помощью любого веб-протокола (HTTP/HTTPS). 
 Сеть Sales также не имеет доступа к интерфейсам R1 с помощью любого веб-протокола. Разрешён весь другой веб-трафик (обратите внимание — Сеть Sales  может получить доступ к интерфейсу Loopback 1 на R1).       
-- Политика3. Сеть Sales не может отправлять эхо-запросы ICMP в сети Operations или Management. Разрешены эхо-запросы ICMP к другим адресатам.         
+- Политика 3. Сеть Sales не может отправлять эхо-запросы ICMP в сети Operations или Management. Разрешены эхо-запросы ICMP к другим адресатам.         
 - Политика 4: Cеть Operations  не может отправлять ICMP эхозапросы в сеть Sales. Разрешены эхо-запросы ICMP к другим адресатам.       
 ## Шаг 1. Проанализируйте требования к сети и политике безопасности для планирования реализации ACL.
- 
+ Подходов может быть множество : можно делать ACL на сабинтерфейсы на R1, можно вешать их на интерфейсы vlan. Пойдем по пути ACL на сабинтерфейсах R1 с фильтрацией на входе. Всего придется сделать 2 листа - один для Sales и один для Operations.
 ## Шаг 2. Разработка и применение расширенных списков доступа, которые будут соответствовать требованиям политики безопасности.
-Откройте окно конфигурации
- 
-Закройте окно настройки.
+Sales
+Ограничиваем доступы по SSH и HTTP/HTTPS из сети Sales в Management
+```
+R1(config)#ip access-list ext SALES
+R1(config-ext-nacl)#deny tcp 10.40.0.0 0.0.0.255 10.20.0.0 0.0.0.255 eq 22
+R1(config-ext-nacl)#deny tcp 10.40.0.0 0.0.0.255 10.20.0.0 0.0.0.255 eq 80
+R1(config-ext-nacl)#deny tcp 10.40.0.0 0.0.0.255 10.20.0.0 0.0.0.255 eq 443
+```
+Так как у нас нет возможности поднять web сервер на R1, а нам надо ограничить доступ по вэб ко всем интерфейсам, для примера поднимем еще один сервер в другом vlan
+
+```
+R1(config-ext-nacl)#deny tcp 10.40.0.0 0.0.0.255 10.30.0.254 0.0.0.255 eq 80
+R1(config-ext-nacl)#deny tcp 10.40.0.0 0.0.0.255 10.30.0.254 0.0.0.255 eq 443
+```
+далее запрещаем пинги и не забываем разрешающее правило
+```
+R1(config-ext-nacl)#deny tcp 10.40.0.0 0.0.0.255 10.30.0.254 0.0.0.255 eq 80
+R1(config-ext-nacl)#deny tcp 10.40.0.0 0.0.0.255 10.30.0.254 0.0.0.255 eq 443
+R1(config-ext-nacl)#deny icmp 10.40.0.0 0.0.0.255 10.20.0.0 0.0.0.255 echo
+R1(config-ext-nacl)#deny icmp 10.40.0.0 0.0.0.255 10.30.0.0 0.0.0.255 echo
+R1(config-ext-nacl)#permit any any
+                            ^
+% Invalid input detected at '^' marker.
+	
+R1(config-ext-nacl)#permit ip any any
+```
+Вешаем на сабинтерфейс
+```
+R1(config)#int g0/0/1.40
+R1(config-subif)#ip a
+R1(config-subif)#ip access
+R1(config-subif)#ip access-group SALES in
+```
+
+
+Opearations
+```
+R1(config)#ip access-list ext OPER
+R1(config-ext-nacl)#deny icmp 10.30.0.0 0.0.0.255 10.40.0.0 0.0.0.255 echo
+R1(config-ext-nacl)#permit ip any any
+R1(config-ext-nacl)#ex
+R1(config)#int g0/0/1.30
+R1(config-subif)#ip access-group OPER in
+
+```
+
 ## Шаг 3. Убедитесь, что политики безопасности применяются развернутыми списками доступа.
 Выполните следующие тесты. Ожидаемые результаты показаны в таблице:
 От	Протокол	Назначение	Результат
@@ -491,3 +618,8 @@ PC-B	HTTPS	10.20.0.1	Сбой
 PC-B	HTTPS	172.16.1.1	Успех
 PC-B	SSH	10.20.0.4	Сбой
 PC-B	SSH	172.16.1.1	Успех
+
+
+В целом все работает с поправкой на изменения в работе.
+
+PS. Отдельная благодарность Евгению за проведение практической работы =)
