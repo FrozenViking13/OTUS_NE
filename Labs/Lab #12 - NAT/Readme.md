@@ -210,62 +210,181 @@ S2(config-if)#
 ## Шаг 1. Настройте NAT на R1, используя пул из трех адресов 209.165.200.226-209.165.200.228. 
 Откройте окно конфигурации
 - a.	Настройте простой список доступа, который определяет, какие хосты будут разрешены для трансляции. В этом случае все устройства в локальной сети R1 имеют право на трансляцию.
-R1(config)# access-list 1 permit 192.168.1.0 0.0.0.255 
+
+```
+R1(config)#access-list 1 permit 192.168.1.0 0.0.0.255 
+```
+
 - b.	Создайте пул NAT и укажите ему имя и диапазон используемых адресов.
-R1(config)# ip nat pool PUBLIC_ACCESS 209.165.200.226 209.165.200.228 netmask 255.255.255.248 
-Примечание. Параметр маски сети не является разделителем IP-адресов. Это должна быть правильная маска подсети для назначенных адресов, даже если вы используете не все адреса подсети в пуле. 
+```
+R1(config)#ip nat pool PUBLIC_ACCESS 209.165.200.226 209.165.200.228 netmask 255.255.255.248 
+```
+
 - c.	Настройте перевод, связывая ACL и пул с процессом преобразования.
-R1(config)# ip nat inside source list 1 pool PUBLIC_ACCESS 
-Примечание: Три очень важных момента. Во-первых, слово «inside» имеет решающее значение для работы такого рода NAT. Если вы опустить его, NAT не будет работать. Во-вторых, номер списка — это номер ACL, настроенный на предыдущем шаге. В-третьих, имя пула чувствительно к регистру. 
+```
+R1(config)#ip nat inside source list 1 pool PUBLIC_ACCESS
+```
+
 - d.	Задайте внутренний (inside) интерфейс. 
-R1(config)# interface g0/0/1
-R1(config-if)# ip nat inside
+```
+R1(config)#int g0/0/1
+R1(config-if)#ip nat inside
+```
 - e.	Определите внешний (outside) интерфейс.
-R1(config)# interface g0/0/0
-R1(config-if)# ip nat outside
+```
+R1(config-if)#int g0/0/0
+R1(config-if)#ip nat outside
+```
 ## Шаг 2. Проверьте и проверьте конфигурацию. 
 - a.	С PC-B,  запустите эхо-запрос интерфейса Lo1 (209.165.200.1) на R2. Если эхо-запрос не прошел, выполните процес поиска и устранения неполадок. На R1 отобразите таблицу NAT на R1 с помощью команды show ip nat translations.
-R1# show ip nat translations
-Pro Inside global Inside local Outside local Outside global
---- 209.165.200.226 192.168.1.3 --- --- 
-226:1 192.168.1. 3:1 209.165.200. 1:1 209.165.200. 1:1 
-Total number of translations: 2
-Вопросы:
-Во что был транслирован внутренний локальный адрес PC-B?
-Введите ваш ответ здесь.
+
+```
+C:\>ping 209.165.200.1
+
+Pinging 209.165.200.1 with 32 bytes of data:
+
+Request timed out.
+Reply from 209.165.200.1: bytes=32 time<1ms TTL=254
+Reply from 209.165.200.1: bytes=32 time<1ms TTL=254
+Reply from 209.165.200.1: bytes=32 time<1ms TTL=254
+
+Ping statistics for 209.165.200.1:
+    Packets: Sent = 4, Received = 3, Lost = 1 (25% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 0ms, Maximum = 0ms, Average = 0ms
+```
+
+```
+R1#sh ip nat translations 
+Pro  Inside global     Inside local       Outside local      Outside global
+icmp 209.165.200.226:10192.168.1.3:10     209.165.200.1:10   209.165.200.1:10
+icmp 209.165.200.226:11192.168.1.3:11     209.165.200.1:11   209.165.200.1:11
+icmp 209.165.200.226:12192.168.1.3:12     209.165.200.1:12   209.165.200.1:12
+icmp 209.165.200.226:9 192.168.1.3:9      209.165.200.1:9    209.165.200.1:9
+```
+
+### Вопросы:
+Во что был транслирован внутренний локальный адрес PC-B?  
+в первый адрес из заданного пула - 209.165.200.226
  
-Какой тип адреса NAT является переведенным адресом?
- 
+Какой тип адреса NAT является переведенным адресом?   
+ Внутренний глобальный
+
 - b.	С PC-A, запустите  эхо-запрос интерфейса Lo1 (209.165.200.1) на R2. Если эхо-запрос не прошел, выполните отладку. На R1 отобразите таблицу NAT на R1 с помощью команды show ip nat translations.
-R1# show ip nat translations 
-Pro Inside global Inside local Outside local Outside global
---- 209.165.200.227 192.168.1.2 --- ---
---- 209.165.200.226 192.168.1.3 --- ---
-227:1 192.168.1. 2:1 209.165.200. 1:1 209.165.200. 1:1
-226:1 192.168.1. 3:1 209.165.200. 1:1 209.165.200. 1:1
-Total number of translations: 4
+
+```
+C:\> ping 209.165.200.1
+
+Pinging 209.165.200.1 with 32 bytes of data:
+
+Reply from 209.165.200.1: bytes=32 time<1ms TTL=254
+Reply from 209.165.200.1: bytes=32 time<1ms TTL=254
+Reply from 209.165.200.1: bytes=32 time<1ms TTL=254
+Reply from 209.165.200.1: bytes=32 time<1ms TTL=254
+
+Ping statistics for 209.165.200.1:
+    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 0ms, Maximum = 0ms, Average = 0ms
+```
+```
+R1#sh ip nat translations 
+Pro  Inside global     Inside local       Outside local      Outside global
+icmp 209.165.200.226:11192.168.1.2:11     209.165.200.1:11   209.165.200.1:11
+icmp 209.165.200.226:12192.168.1.2:12     209.165.200.1:12   209.165.200.1:12
+icmp 209.165.200.226:13192.168.1.2:13     209.165.200.1:13   209.165.200.1:13
+icmp 209.165.200.226:14192.168.1.2:14     209.165.200.1:14   209.165.200.1:14
+
+R1#
+```
 - c.	Обратите внимание, что предыдущая трансляция для PC-B все еще находится в таблице. Из S1, эхо-запрос интерфейса Lo1 (209.165.200.1) на R2. Если эхо-запрос не прошел, выполните отладку. На R1 отобразите таблицу NAT на R1 с помощью команды show ip nat translations.
-R1# show ip nat translations
-Pro Inside global Inside local Outside local Outside global
---- 209.165.200.227 192.168.1.2 --- ---
---- 209.165.200.226 192.168.1.3 --- ---
---- 209.165.200.228 192.168.1.11 --- ---
-226:1 192.168.1. 3:1 209.165.200. 1:1 209.165.200. 1:1
-228:0 192.168.1. 11:0 209.165.200. 1:0 209.165.200. 1:0 209.165.200. 1:0
-Total number of translations: 5
+```
+S1#ping 209.165.200.1
+
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 209.165.200.1, timeout is 2 seconds:
+.....
+Success rate is 0 percent (0/5)
+
+S1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+S1(config)#ip default-g
+S1(config)#ip default-g
+S1(config)#ip default-gateway 192.168.1.1
+S1(config)#ex
+S1#
+%SYS-5-CONFIG_I: Configured from console by console
+ping 209.165.200.1
+
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 209.165.200.1, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 0/0/0 ms
+
+```
+```
+R1#sh ip nat translations 
+Pro  Inside global     Inside local       Outside local      Outside global
+icmp 209.165.200.226:31192.168.1.11:31    209.165.200.1:31   209.165.200.1:31
+icmp 209.165.200.226:32192.168.1.11:32    209.165.200.1:32   209.165.200.1:32
+icmp 209.165.200.226:33192.168.1.11:33    209.165.200.1:33   209.165.200.1:33
+icmp 209.165.200.226:34192.168.1.11:34    209.165.200.1:34   209.165.200.1:34
+icmp 209.165.200.226:35192.168.1.11:35    209.165.200.1:35   209.165.200.1:35
+
+R1#
+```
+
 - d.	Теперь запускаем пинг R2 Lo1 из S2. На этот раз перевод завершается неудачей, и вы получаете эти сообщения (или аналогичные) на консоли R1:
 Sep 23 15:43:55.562: %IOSXE-6-PLATFORM: R0/0: cpp_cp: QFP:0.0 Thread:000 TS:00000001473688385900 %NAT-6-ADDR_ALLOC_FAILURE: Address allocation failed; pool 1 may be exhausted [2]
+```
+S2#
+%SYS-5-CONFIG_I: Configured from console by console
+ping 209.165.200.1
+
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 209.165.200.1, timeout is 2 seconds:
+.!!!!
+Success rate is 80 percent (4/5), round-trip min/avg/max = 0/2/11 ms
+
+```
+У меня пинги прошли. Вероятно? надо запустить их одновременно, чтобы выйти за рамки установленного пула. Проверим =)
+Запустил одновременно пинг с S1, PC-A и PC-B и да, со свитча S2 пинги не прошли. На R1 сообщений не увидел, а таблица трансляций выглядит так:
+```
+R1#sh ip nat translations 
+Pro  Inside global     Inside local       Outside local      Outside global
+icmp 209.165.200.226:15192.168.1.2:15     209.165.200.1:15   209.165.200.1:15
+icmp 209.165.200.226:16192.168.1.2:16     209.165.200.1:16   209.165.200.1:16
+icmp 209.165.200.226:17192.168.1.2:17     209.165.200.1:17   209.165.200.1:17
+icmp 209.165.200.226:18192.168.1.2:18     209.165.200.1:18   209.165.200.1:18
+icmp 209.165.200.227:36192.168.1.11:36    209.165.200.1:36   209.165.200.1:36
+icmp 209.165.200.227:37192.168.1.11:37    209.165.200.1:37   209.165.200.1:37
+icmp 209.165.200.227:38192.168.1.11:38    209.165.200.1:38   209.165.200.1:38
+icmp 209.165.200.227:39192.168.1.11:39    209.165.200.1:39   209.165.200.1:39
+icmp 209.165.200.227:40192.168.1.11:40    209.165.200.1:40   209.165.200.1:40
+icmp 209.165.200.228:13192.168.1.3:13     209.165.200.1:13   209.165.200.1:13
+icmp 209.165.200.228:14192.168.1.3:14     209.165.200.1:14   209.165.200.1:14
+icmp 209.165.200.228:15192.168.1.3:15     209.165.200.1:15   209.165.200.1:15
+icmp 209.165.200.228:16192.168.1.3:16     209.165.200.1:16   209.165.200.1:16
+```
+Использован весь пул адресов.
+
 - e.	Это ожидаемый результат, потому что выделено только 3 адреса, и мы попытались ping Lo1 с четырех устройств. Напомним, что NAT — это трансляция «один-в-один». Как много выделено трансляций? Введите команду show ip nat translations verbose , и вы увидите, что ответ будет 24 часа.
-R1# show ip nat translations verbose 
-Pro Inside global Inside local Outside local Outside global
---- 209.165.200.226 192.168.1.3 --- ---
-  create: 09/23/19 15:35:27, use: 09/23/19 15:35:27, timeout: 23:56:42
-  Map-Id(In): 1
-<output omitted>
+```
+R1#show ip nat translations ?
+  <cr>
+```
+CPT, судя по всему, опять не смог.
+
 - f.	Учитывая, что пул ограничен тремя адресами, NAT для пула адресов недостаточно для нашего приложения. Очистите преобразование NAT и статистику, и мы перейдем к PAT.
-R1# clear ip nat translations * 
-R1# clear ip nat statistics 
-Закройте окно настройки.
+```
+R1#clear ip nat tr
+R1#clear ip nat translation *
+R1#clear ip nat sta
+
+R1#clear ip nat ?
+  translation  Clear dynamic translation
+```
+
 #  Часть 3. Настройка и проверка PAT для IPv4.
 В части 3 необходимо настроить замену NAT на PAT в пул адресов, а затем на PAT с помощью интерфейса.
 ## Шаг 1. Удалите команду преобразования на R1.
