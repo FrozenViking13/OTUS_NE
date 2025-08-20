@@ -1,0 +1,68 @@
+R1
+
+ip nat inside source static udp 10.1.0.2 53 8.8.8.8 53 
+ip classless
+ip route 1.1.1.1 255.255.255.255 100.64.1.0 
+
+
+R0
+
+ip nat inside source static tcp 10.0.0.2 443 1.1.1.1 443 
+ip classless
+ip route 8.8.8.8 255.255.255.255 100.64.1.1 
+
+R2
+
+!
+ip nat pool NATPOOL 100.65.0.1 100.65.0.5 netmask 255.255.255.0
+ip nat inside source list NAT pool NATPOOL
+ip classless
+ip route 8.8.8.8 255.255.255.255 100.64.1.1 
+ip route 1.1.1.1 255.255.255.255 100.64.1.0 
+!
+ip access-list standard NAT
+ permit 172.16.2.0 0.0.0.255
+ 
+ 
+R3
+
+!
+ip nat pool PATPOOL 100.66.0.1 100.66.0.4 netmask 255.255.255.0
+ip nat inside source list PAT interface GigabitEthernet0/0/0 overload
+ip classless
+ip route 8.8.8.8 255.255.255.255 100.64.1.1 
+ip route 1.1.1.1 255.255.255.255 100.64.1.0 
+!
+!
+ip access-list standard PAT
+ permit 172.16.3.0 0.0.0.255
+ 
+ 
+ 
+R4
+
+ip nat pool NATPOOL 100.67.0.1 100.67.0.5 netmask 255.255.255.0
+ip nat inside source list NAT pool NATPOOL
+ip classless
+ip route 8.8.8.8 255.255.255.255 100.64.1.1 
+ip route 1.1.1.1 255.255.255.255 100.64.1.0 
+ip route 100.100.100.0 255.255.255.0 172.16.4.2
+
+ip access-list standard NAT
+ permit 100.100.100.0 0.0.0.255
+ 
+ 
+R5
+!
+ip nat pool PATPOOL 100.100.100.1 100.100.100.5 netmask 255.255.255.0
+ip nat inside source list PAT pool PATPOOL overload
+ip default-gateway 172.16.4.1
+ip classless
+ip route 100.64.0.0 255.192.0.0 172.16.4.1 
+ip route 8.8.8.8 255.255.255.255 172.16.4.1 
+ip route 1.1.1.1 255.255.255.255 172.16.4.1 
+!
+!
+ip access-list standard PAT
+ permit 172.16.5.0 0.0.0.255
+
