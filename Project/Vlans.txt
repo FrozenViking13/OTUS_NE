@@ -1,0 +1,89 @@
+DSW2
+
+en 
+conf t
+standby version 2
+int vlan 2
+ip add 192.168.0.3 255.255.254.0 
+standby version 2
+standby 2 ip 192.168.0.1
+
+
+int vlan 15
+ip add 192.168.15.3 255.255.255.240
+standby version 2
+standby 15 ip 192.168.15.1
+
+
+int vlan 17
+ip add 192.168.17.3 255.255.255.240
+standby version 2
+standby 17 ip  192.168.17.1
+
+
+int vlan 999
+ip add 172.16.0.3 255.255.255.0
+standby version 2
+standby 999 ip  172.16.0.1
+
+
+int vlan 100
+ip add 192.168.100.3 255.255.255.224
+standby version 2
+standby 100 ip 192.168.100.1
+
+
+int vlan 250
+ip add  192.168.250.3 255.255.255.224
+standby version 2
+standby 250 ip  192.168.250.1
+
+
+int vlan 200
+ip add 192.168.200.3 255.255.255.128
+standby version 2
+standby 200 ip 192.168.200.1
+
+en 
+conf t
+int vlan 2
+standby 2 priority 100
+
+int vlan 15
+standby 15 priority 200
+standby 15 preempt
+int vlan 17
+standby 17 priority 200
+standby 17 preempt
+int vlan 999
+standby 999 priority 200
+standby 999 preempt
+int vlan 100
+standby 100 priority 100
+
+int vlan 250
+standby 250 priority 100
+
+int vlan 200
+standby 200 priority 100
+
+
+
+
+
+
+
+DCL3SW
+
+en 
+conf t
+
+int vlan 210
+ip add 192.168.210.3 255.255.255.128
+
+standby version 2
+standby 210 ip 192.168.210.1
+standby 210 priority 100
+
+
+
