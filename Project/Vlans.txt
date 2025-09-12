@@ -86,4 +86,75 @@ standby 210 ip 192.168.210.1
 standby 210 priority 100
 
 
+DSW2
+
+spanning-tree vlan 2 root secondary 
+spanning-tree vlan 13 prioroty 110
+spanning-tree vlan 15 prioroty 110
+spanning-tree vlan 17 prioroty 110
+spanning-tree vlan 100 root secondary
+spanning-tree vlan 200 root secondary  
+spanning-tree vlan 250 root secondary 
+spanning-tree vlan 999 root primary
+
+
+DHCP
+en
+conf t
+ip dhcp excluded-address 192.168.17.1 192.168.17.3
+ip dhcp excluded-address 192.168.15.1 192.168.15.3
+ip dhcp pool VLAN17_POOL
+network 192.168.17.0 255.255.255.240
+domain-name myotusproject.org
+default-router 192.168.17.1
+dns-server 192.168.200.4
+
+
+
+network 192.168.113.0 0.0.0.15 area 0
+network 192.168.210.0 0.0.0.127 area 0
+
+
+network 192.168.0.0 0.0.1.255 area 0
+network 192.168.200.0 0.0.0.127 area 0
+
+network 192.168.13.0 0.0.0.255 area 0
+network 192.168.15.0 0.0.0.15 area 0
+
+network 192.168.17.0 0.0.0.15 area 0
+
+
+DNS NAT
+ip nat inside source static udp 10.1.0.3 53 8.8.8.8 53 
+WEB NAT
+ip nat inside source static tcp 10.0.0.2 443 1.1.1.1 443 
+
+
+
+no lldp run
+cdp run
+
+access-list 1 permit host 11.1.1.1
+access-list 1 permit host 12.1.1.1
+access-list 1 permit 192.168.0.0 0.0.1.255
+access-list 1 permit 192.168.15.0 0.0.0.15
+access-list 1 permit 192.168.17.0 0.0.0.15
+access-list 1 permit 192.168.200.0 0.0.0.15
+
+
+no ip route 7.7.7.7 255.255.255.255 100.64.1.0 
+no ip route 111.1.1.0 255.255.255.0 100.64.1.11 
+no ip route 222.2.2.0 255.255.255.0 100.64.1.11 
+no ip route 0.0.0.0 0.0.0.0 100.64.1.11
+
+
+ip access-list ext DCSRV
+permit ip 192.168.210.0 0.0.0.127 192.168.0.0 0.0.1.255
+permit ip 192.168.210.0 0.0.0.127 192.168.13.0 0.0.0.255
+permit ip 192.168.210.0 0.0.0.127 192.168.15.0 0.0.0.15
+permit ip 192.168.210.0	0.0.0.127 192.168.17.0 0.0.0.15
+permit ip 192.168.210.0	0.0.0.127 192.168.200.0	0.0.0.127
+permit ip 192.168.210.0	0.0.0.127 192.168.210.0	0.0.0.127
+permit ip 192.168.210.6	0.0.0.0	any
+deny ip	any any
 
