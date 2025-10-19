@@ -247,6 +247,7 @@ SW3#
 ## Etherchannel
 Etherchannel в МОскве и Петербурге поднят в LACP Active-PAssive
 
+Как пример, SW5:
 ```
 SW5#sh etherchannel sum
 Flags:  D - down        P - bundled in port-channel
@@ -353,5 +354,6 @@ SW5#
 ```
 
 
-# Configs
+## MGMT / Loopback
 
+На всех сетевых устройствах поднят lo0 с ip 1.1.1.X/32, где X - число из имени устройства
