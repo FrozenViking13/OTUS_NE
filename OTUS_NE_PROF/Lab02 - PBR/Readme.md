@@ -178,7 +178,7 @@ R28(config)#ip access-list ext ACL1
 R28(config-ext-nacl)#permit ip host 192.168.50.10 any
 
 ```
-Предположим, что мы хотим изменить его маршрут до R25 и пустить трафик через R2, тогда пишем RoutMap для созданного ACL1 и указываем NExt-Hop - 16.16.16.1
+Предположим, что мы хотим изменить его маршрут до R25 и пустить трафик через R26, тогда пишем RoutMap для созданного ACL1 и указываем NExt-Hop - 16.16.16.1
 
 ```
 R28(config)#route-map ROUTEMAP1 permit 10
@@ -293,6 +293,15 @@ trace to 1.1.1.25, 8 hops max, press Ctrl+C to stop
  2   *15.15.15.1   0.857 ms (ICMP type:3, code:3, Destination port unreachable)  *
 ```
 Ура, получилось. И при поднятии интерфейса маршрут вернулся обратно.
+```
+
+VPCS> trace 1.1.1.25
+trace to 1.1.1.25, 8 hops max, press Ctrl+C to stop
+ 1   192.168.50.1   0.661 ms  0.296 ms  0.400 ms
+ 2   16.16.16.1   0.502 ms  0.346 ms  0.293 ms
+ 3   *10.10.10.81   0.485 ms (ICMP type:3, code:3, Destination port unreachable)  *
+
+``` 
 
 ### Настройте для офиса Лабытнанги маршрут по-умолчанию.
 
