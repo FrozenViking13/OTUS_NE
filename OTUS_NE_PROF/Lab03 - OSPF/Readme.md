@@ -1152,3 +1152,108 @@ R19(config-router)#
 
 ## Маршрутизатор R20 находится в зоне 102 и получает все маршруты, кроме маршрутов до сетей зоны 101.
 
+
+
+Маршруты до:
+</code></pre>
+</details>
+<details>
+<summary>R20</summary>
+<pre><code>
+
+R20#sh ip route ospf
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route, H - NHRP, l - LISP
+       a - application route
+       + - replicated route, % - next hop override
+
+Gateway of last resort is 10.10.10.37 to network 0.0.0.0
+
+O*E2  0.0.0.0/0 [110/1] via 10.10.10.37, 01:27:56, Ethernet0/0
+      1.0.0.0/32 is subnetted, 8 subnets
+O IA     1.1.1.4 [110/31] via 10.10.10.37, 02:56:34, Ethernet0/0
+O IA     1.1.1.5 [110/31] via 10.10.10.37, 02:52:47, Ethernet0/0
+O IA     1.1.1.12 [110/21] via 10.10.10.37, 02:54:42, Ethernet0/0
+O IA     1.1.1.13 [110/21] via 10.10.10.37, 02:55:05, Ethernet0/0
+O IA     1.1.1.14 [110/31] via 10.10.10.37, 02:59:24, Ethernet0/0
+O IA     1.1.1.15 [110/11] via 10.10.10.37, 02:54:10, Ethernet0/0
+O IA     1.1.1.19 [110/41] via 10.10.10.37, 01:09:11, Ethernet0/0
+      10.0.0.0/8 is variably subnetted, 11 subnets, 2 masks
+O IA     10.10.10.0/30 [110/30] via 10.10.10.37, 04:22:13, Ethernet0/0
+O IA     10.10.10.4/30 [110/30] via 10.10.10.37, 04:22:13, Ethernet0/0
+O IA     10.10.10.8/30 [110/30] via 10.10.10.37, 04:22:13, Ethernet0/0
+O IA     10.10.10.12/30 [110/20] via 10.10.10.37, 04:22:23, Ethernet0/0
+O IA     10.10.10.16/30 [110/30] via 10.10.10.37, 04:22:13, Ethernet0/0
+O IA     10.10.10.20/30 [110/30] via 10.10.10.37, 04:22:13, Ethernet0/0
+O IA     10.10.10.24/30 [110/20] via 10.10.10.37, 04:22:23, Ethernet0/0
+O IA     10.10.10.28/30 [110/30] via 10.10.10.37, 04:22:08, Ethernet0/0
+O IA     10.10.10.32/30 [110/40] via 10.10.10.37, 01:09:11, Ethernet0/0
+</code></pre>
+</details>
+
+Нам необходимо написать prefix-list на ABR, то есть в данном случае R15, в котором мы запретим стыковочную сеть до зоны 101, то есть 10.10.10.32/30
+
+```
+R15(config)#ip prefix-list FILTER101 deny 10.10.10.32/30
+R15(config)#ip prefix-list FILTER101 permit 0.0.0.0/0 le 32
+R15#sh ip prefix-list
+ip prefix-list FILTER101: 2 entries
+   seq 5 deny 10.10.10.32/30
+   seq 10 permit 0.0.0.0/0 le 32
+R15#
+
+```
+И привязываем лист на выход
+```
+R15(config-router)#area 0 filter-list prefix FILTER101 out
+```
+
+Проверяем таблицу маршрутов на R20:
+
+</code></pre>
+</details>
+<details>
+<summary>R20</summary>
+<pre><code>
+R20#sh ip route ospf
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route, H - NHRP, l - LISP
+       a - application route
+       + - replicated route, % - next hop override
+
+Gateway of last resort is 10.10.10.37 to network 0.0.0.0
+
+O*E2  0.0.0.0/0 [110/1] via 10.10.10.37, 01:36:35, Ethernet0/0
+      1.0.0.0/32 is subnetted, 8 subnets
+O IA     1.1.1.4 [110/31] via 10.10.10.37, 03:05:13, Ethernet0/0
+O IA     1.1.1.5 [110/31] via 10.10.10.37, 03:01:26, Ethernet0/0
+O IA     1.1.1.12 [110/21] via 10.10.10.37, 03:03:21, Ethernet0/0
+O IA     1.1.1.13 [110/21] via 10.10.10.37, 03:03:44, Ethernet0/0
+O IA     1.1.1.14 [110/31] via 10.10.10.37, 03:08:03, Ethernet0/0
+O IA     1.1.1.15 [110/11] via 10.10.10.37, 03:02:49, Ethernet0/0
+O IA     1.1.1.19 [110/41] via 10.10.10.37, 01:17:50, Ethernet0/0
+      10.0.0.0/8 is variably subnetted, 10 subnets, 2 masks
+O IA     10.10.10.0/30 [110/30] via 10.10.10.37, 04:30:52, Ethernet0/0
+O IA     10.10.10.4/30 [110/30] via 10.10.10.37, 04:30:52, Ethernet0/0
+O IA     10.10.10.8/30 [110/30] via 10.10.10.37, 04:30:52, Ethernet0/0
+O IA     10.10.10.12/30 [110/20] via 10.10.10.37, 04:31:02, Ethernet0/0
+O IA     10.10.10.16/30 [110/30] via 10.10.10.37, 04:30:52, Ethernet0/0
+O IA     10.10.10.20/30 [110/30] via 10.10.10.37, 04:30:52, Ethernet0/0
+O IA     10.10.10.24/30 [110/20] via 10.10.10.37, 04:31:02, Ethernet0/0
+O IA     10.10.10.28/30 [110/30] via 10.10.10.37, 04:30:47, Ethernet0/0
+R20#
+
+</code></pre>
+</details>
+
+Как видим, сеть 10.10.10.32/30 удалена из таблицы. 
