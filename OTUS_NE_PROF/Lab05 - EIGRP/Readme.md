@@ -569,3 +569,49 @@ D        10.10.10.56/30 [90/1029120] via 192.168.40.2, 00:05:19, Vlan40
 </code></pre>
 </details>
 
+Проверим доступность всех устройств с VPC:
+```
+VPCS> sh ip
+
+NAME        : VPCS[1]
+IP/MASK     : 192.168.40.10/24
+GATEWAY     : 192.168.40.1
+DNS         :
+MAC         : 00:50:79:66:68:0b
+LPORT       : 20000
+RHOST:PORT  : 127.0.0.1:30000
+MTU         : 1500
+
+VPCS> ping 1.1.1.32
+
+84 bytes from 1.1.1.32 icmp_seq=1 ttl=253 time=0.781 ms
+84 bytes from 1.1.1.32 icmp_seq=2 ttl=253 time=0.777 ms
+^C
+VPCS> ping 1.1.1.18
+
+84 bytes from 1.1.1.18 icmp_seq=1 ttl=253 time=0.898 ms
+84 bytes from 1.1.1.18 icmp_seq=2 ttl=253 time=1.013 ms
+^C
+VPCS> ping 1.1.1.17
+
+84 bytes from 1.1.1.17 icmp_seq=1 ttl=254 time=0.659 ms
+84 bytes from 1.1.1.17 icmp_seq=2 ttl=254 time=0.921 ms
+^C
+VPCS> ping 1.1.1.16
+
+84 bytes from 1.1.1.16 icmp_seq=1 ttl=254 time=0.852 ms
+84 bytes from 1.1.1.16 icmp_seq=2 ttl=254 time=1.047 ms
+^C
+VPCS> ping 1.1.1.10
+
+84 bytes from 1.1.1.10 icmp_seq=1 ttl=255 time=0.493 ms
+84 bytes from 1.1.1.10 icmp_seq=2 ttl=255 time=0.450 ms
+^C
+VPCS> ping 1.1.1.9
+
+84 bytes from 1.1.1.9 icmp_seq=1 ttl=255 time=0.716 ms
+84 bytes from 1.1.1.9 icmp_seq=2 ttl=255 time=0.766 ms
+^C
+VPCS>
+```
+Все выглядит рабочим
