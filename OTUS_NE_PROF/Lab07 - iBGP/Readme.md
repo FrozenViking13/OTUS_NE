@@ -158,7 +158,6 @@ R25(config-router)#network 1.1.1.25 mask 255.255.255.255
 
 R26
 ```
-R26(config)#no router bgp 520
 R26(config)#router bgp 520
 R26(config-router)#bgp router-id 26.26.26.26
 R26(config-router)#network 1.1.1.26 mask 255.255.255.255
