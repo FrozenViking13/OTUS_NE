@@ -543,10 +543,7 @@ trace to 192.168.30.10, 8 hops max, press Ctrl+C to stop
  8   10.10.10.66   8.156 ms  3.115 ms  7.243 ms
 
 VPCS>
-VPCS> .064 ms  0.934 ms
-Bad command: ".064 ms  0.934 ms". Use ? for help.
 
-VPCS>
 ```
 Трассировка из СПБ в Москву
 ```
