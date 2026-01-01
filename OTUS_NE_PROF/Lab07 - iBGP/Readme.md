@@ -112,13 +112,22 @@ R15#
 
 R24
 ```
-R24(config)#router bgp 520
-R24(config-router)#no neighbor 23.23.23.23 peer-group TRIADAPG
-R24(config-router)#no neighbor 25.25.25.25 peer-group TRIADAPG
-R24(config-router)#no neighbor 26.26.26.26 peer-group TRIADAPG
-R24(config-router)#neighbor 1.1.1.23 peer-group TRIADAPG
-R24(config-router)#neighbor 1.1.1.25 peer-group TRIADAPG
-R24(config-router)#neighbor 1.1.1.26 peer-group TRIADAPG
+R24#sh run | sec bgp
+router bgp 520
+ bgp router-id 24.24.24.24
+ bgp log-neighbor-changes
+ network 1.1.1.24 mask 255.255.255.255
+ neighbor TRIADAPG peer-group
+ neighbor TRIADAPG remote-as 520
+ neighbor TRIADAPG update-source Loopback0
+ neighbor TRIADAPG route-reflector-client
+ neighbor TRIADAPG next-hop-self
+ neighbor 1.1.1.23 peer-group TRIADAPG
+ neighbor 1.1.1.25 peer-group TRIADAPG
+ neighbor 1.1.1.26 peer-group TRIADAPG
+ neighbor 13.13.13.1 remote-as 301
+ neighbor 111.111.111.2 remote-as 2042
+R24#
 
 
 ```
