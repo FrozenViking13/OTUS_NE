@@ -484,9 +484,8 @@ R21#
 <pre><code>
 
 ```
-R15#
 R15#sh ip bgp neighbors 200.0.0.1 received-routes
-BGP table version is 173, local router ID is 15.15.15.15
+BGP table version is 231, local router ID is 15.15.15.15
 Status codes: s suppressed, d damped, h history, * valid, > best, i - internal,
               r RIB-failure, S Stale, m multipath, b backup-path, f RT-Filter,
               x best-external, a additional-path, c RIB-compressed,
@@ -494,7 +493,7 @@ Origin codes: i - IGP, e - EGP, ? - incomplete
 RPKI validation codes: V valid, I invalid, N Not found
 
      Network          Next Hop            Metric LocPrf Weight Path
- r   0.0.0.0          200.0.0.1                              0 301 i
+ *   0.0.0.0          200.0.0.1                              0 301 i
  *   1.1.1.9/32       200.0.0.1                              0 301 520 2042 ?
  *   1.1.1.10/32      200.0.0.1                              0 301 520 2042 ?
  *   1.1.1.16/32      200.0.0.1                              0 301 520 2042 ?
@@ -508,6 +507,7 @@ RPKI validation codes: V valid, I invalid, N Not found
 
 Total number of prefixes 11
 R15#
+
 
 ```
 
