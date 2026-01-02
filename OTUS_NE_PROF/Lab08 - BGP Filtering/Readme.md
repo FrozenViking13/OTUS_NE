@@ -388,6 +388,7 @@ R22#
 <summary>R14 после фильтрации</summary>
 <pre><code>
 
+```
 R14#sh ip bgp neighbors  100.0.0.1 received-routes
 BGP table version is 170, local router ID is 14.14.14.14
 Status codes: s suppressed, d damped, h history, * valid, > best, i - internal,
@@ -401,6 +402,7 @@ RPKI validation codes: V valid, I invalid, N Not found
 
 Total number of prefixes 1
 R14#
+```
 
 </code></pre>
 </details>
