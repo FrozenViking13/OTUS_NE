@@ -18,7 +18,7 @@
 
 Примем, что для LLA будем использовать адресацию по принципу fe80::DeviceNumber+InterfaceNumber, Например, для R22 интерфейс e0/1 - fe80::221   
 ДЛя лупбэков - fc00::DevN/128    
-Для GUA - 2000:AS1:AS2::IPv4. Пример - 2000:101:301::11:11:11:1/64
+Для GUA - 2000:AS1:AS2::IPv4. Пример - 2000:101:301::11:11:11:1/64      
 LLA для iBGP, GUA для eBGP
 ## Настроите eBGP IPv6 unicast между офисом Москва и двумя провайдерами - Киторн и Ламас.
 Конфиги:
@@ -421,10 +421,7 @@ R18(config-if)#ipv6 add 2000:520:2042::111:111:1:2/64
 %Ethernet0/3: Error: 2000:520:2042::/64 is overlapping with 2000:520:2042::/64 on Ethernet0/2
 R18(config-if)#ipv6 add 2000:2042:520::111:111:1:2/64
 R18(config-if)#router bgp 2042
-R18(config-router)#neigh
-R18(config-router)#neighbor 2000:520:2042::111:111:111:1 remote
 R18(config-router)#neighbor 2000:520:2042::111:111:111:1 remote-as 520
-R18(config-router)#neigh
 R18(config-router)#neighbor 2000:2042:520::111:111:1:1 remote
 R18(config-router)#neighbor 2000:2042:520::111:111:1:1 remote-as 520
 R18(config-router)#add ipv6
