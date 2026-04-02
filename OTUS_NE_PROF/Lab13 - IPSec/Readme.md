@@ -22,10 +22,10 @@
 </code></pre>
 </details>
 <details>
-<summary>R14</summary>
+<summary>R14 (Выбран в качестве CA) </summary>
 <pre><code>
 
-R14
+
 ```
 R14(config)#ip domain name otus.ru
 R14(config)#ip http server
@@ -62,7 +62,7 @@ R14(cs-server)#
 <summary>Пример R15</summary>
 <pre><code>
 
-R15
+
 ```
 R15(config)#ip host R14 1.1.1.14
 R15(config)#ip host R14.otus.ru 1.1.1.14
@@ -118,7 +118,6 @@ R15(config)#
 <summary>R14</summary>
 <pre><code>
 
-R14
 ```
 R14#sh crypto pki server R14 requests
 Enrollment Request Database:
@@ -163,7 +162,6 @@ R14#
 <summary>R15</summary>
 <pre><code>
 
-R15
 ```
 R15#conf t
 Enter configuration commands, one per line.  End with CNTL/Z.
@@ -243,7 +241,7 @@ R15#
 <summary>R18</summary>
 <pre><code>
 
-R18
+
 ```
 R18#conf t
 Enter configuration commands, one per line.  End with CNTL/Z.
@@ -381,7 +379,7 @@ R15#
 </details>
 
 ## $Настроите DMVPN поверх IPSec между Москва и Чокурдах, Лабытнанги.
-
+Конфиг по сути тот же, просто изменил имя  пропосал, полиси, транспорт сет и профиля. 
 </code></pre>
 </details>
 <details>
