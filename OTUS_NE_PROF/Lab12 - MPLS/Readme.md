@@ -41,6 +41,7 @@ R14(config-if-range)#mpls label protocol ldp
 <details>
 <summary>R14 Проверка </summary>
 <pre><code>
+
 ```
 R14#sh mpls int det
 Interface Ethernet0/0:
