@@ -1,0 +1,142 @@
+Запрет транзитного трафика
+R14#sh run | sec bgp
+router bgp 1001
+ bgp router-id 14.14.14.14
+ bgp log-neighbor-changes
+ network 1.1.1.14 mask 255.255.255.255
+ redistribute ospf 1
+ neighbor 1.1.1.15 remote-as 1001
+ neighbor 1.1.1.15 update-source Loopback0
+ neighbor 1.1.1.15 soft-reconfiguration inbound
+ neighbor 100.0.0.1 remote-as 101
+ neighbor 100.0.0.1 route-map R14_AS_PREPEND out
+ neighbor 100.0.0.1 filter-list 1 out
+R14#sh run | sec acc
+ip as-path access-list 1 permit ^$
+ip as-path access-list 1 deny .*
+
+R18(config-router)#do sh run | sec pre
+ip prefix-list SPBFILT seq 10 permit 10.10.10.40/29
+ip prefix-list SPBFILT seq 11 permit 10.10.10.32/27
+ip prefix-list SPBFILT seq 12 permit 10.10.10.64/30
+ip prefix-list SPBFILT seq 20 permit 192.168.30.0/24
+ip prefix-list SPBFILT seq 21 permit 192.168.40.0/24
+ip prefix-list SPBFILT seq 30 permit 1.1.1.9/32
+ip prefix-list SPBFILT seq 31 permit 1.1.1.10/32
+ip prefix-list SPBFILT seq 32 permit 1.1.1.16/32
+ip prefix-list SPBFILT seq 33 permit 1.1.1.17/32
+ip prefix-list SPBFILT seq 34 permit 1.1.1.18/32
+ip prefix-list SPBFILT seq 35 permit 1.1.1.32/32
+ip prefix-list SPBFILT seq 100 deny 0.0.0.0/0 le 32
+R18(config)#do sh run | sec bgp
+router bgp 2042
+ bgp router-id 18.18.18.18
+ bgp log-neighbor-changes
+ bgp bestpath as-path multipath-relax
+ network 1.1.1.18 mask 255.255.255.255
+ redistribute eigrp 1
+ neighbor 111.111.1.1 remote-as 520
+ neighbor 111.111.1.1 prefix-list SPBFILT out
+ neighbor 111.111.111.1 remote-as 520
+ neighbor 111.111.111.1 prefix-list SPBFILT out
+ maximum-paths 2
+ 
+ R18(config-router)#bgp bestpath as-path multipath-relax
+R18(config-router)#maximum-paths 2
+
+sh ip bgp neighbors 200.0.0.1 received-routes
+neighbor 200.0.0.2 soft-reconfiguration inbound
+
+
+
+
+router bgp 1001
+ bgp router-id 15.15.15.15
+ bgp log-neighbor-changes
+ neighbor 1.1.1.14 remote-as 1001
+ neighbor 1.1.1.14 update-source Loopback0
+ neighbor 2000:301:1001:0:200::1 remote-as 301
+ neighbor 200.0.0.1 remote-as 301
+ !
+ address-family ipv4
+  network 1.1.1.15 mask 255.255.255.255
+  redistribute ospf 1
+  neighbor 1.1.1.14 activate
+  no neighbor 2000:301:1001:0:200::1 activate
+  neighbor 200.0.0.1 activate
+  neighbor 200.0.0.1 soft-reconfiguration inbound
+  neighbor 200.0.0.1 route-map R15_LOC_PREF in
+  neighbor 200.0.0.1 filter-list 1 out
+ exit-address-family
+ !
+ address-family ipv6
+  network FC00::15/128
+  neighbor 2000:301:1001:0:200::1 activate
+ exit-address-family
+!
+ip forward-protocol nd
+!
+ip as-path access-list 1 permit ^$
+!
+no ip http server
+no ip http secure-server
+ip route 0.0.0.0 0.0.0.0 200.0.0.1
+!
+!
+ip prefix-list FILTER101 seq 5 deny 10.10.10.32/30
+ip prefix-list FILTER101 seq 10 permit 0.0.0.0/0 le 32
+!
+route-map R15_LOC_PREF permit 10
+ set local-preference 200
+
+ 
+ 
+ router bgp 1001
+ bgp router-id 15.15.15.15
+ bgp log-neighbor-changes
+ network 1.1.1.15 mask 255.255.255.255
+ redistribute ospf 1
+ neighbor 1.1.1.14 remote-as 1001
+ neighbor 1.1.1.14 update-source Loopback0
+ neighbor 200.0.0.1 remote-as 301
+ neighbor 200.0.0.1 route-map R15_LOC_PREF in
+ 
+ 
+ 
+ 
+ router bgp 1001
+ bgp router-id 14.14.14.14
+ bgp log-neighbor-changes
+ neighbor 1.1.1.15 remote-as 1001
+ neighbor 1.1.1.15 update-source Loopback0
+ neighbor 2000:101:1001:0:100::1 remote-as 101
+ neighbor 100.0.0.1 remote-as 101
+ !
+ address-family ipv4
+  network 1.1.1.14 mask 255.255.255.255
+  redistribute ospf 1
+  neighbor 1.1.1.15 activate
+  neighbor 1.1.1.15 soft-reconfiguration inbound
+  no neighbor 2000:101:1001:0:100::1 activate
+  neighbor 100.0.0.1 activate
+  neighbor 100.0.0.1 soft-reconfiguration inbound
+  neighbor 100.0.0.1 route-map R14_AS_PREPEND out
+  neighbor 100.0.0.1 filter-list 1 out
+ exit-address-family
+ !
+ address-family ipv6
+  network FC00::14/128
+  neighbor 2000:101:1001:0:100::1 activate
+ exit-address-family
+!
+ip forward-protocol nd
+!
+ip as-path access-list 1 permit ^$
+!
+no ip http server
+no ip http secure-server
+!
+ipv6 route FC00::15/128 2000:1001::10:10:10:29
+!
+route-map R14_AS_PREPEND permit 10
+ set as-path prepend 1001 1001

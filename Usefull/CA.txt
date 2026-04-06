@@ -1,0 +1,37 @@
+ip domain name otus.ru
+ip http server
+
+Server
+
+
+crypto pki server R14
+ database level complete
+ no database archive
+ issuer-name CN=R14, O=Otus, C=ru
+ 
+ crypto pki trustpoint R14
+ revocation-check crl
+ rsakeypair R14
+
+no shutdown
+
+ENTER PASS!!!
+
+Client
+
+ 
+ip host R14 1.1.1.14
+ip host R14.otus.ru 1.1.1.14
+
+crypto pki trustpoint R14
+ enrollment url http://R14.otus.ru:80
+ serial-number
+ subject-name CN=R18, O=Otus, C=RU
+ revocation-check crl
+ exit
+ 
+ crypto pki authenticate R14
+ 
+ crypto pki enroll R14
+ 
+ 

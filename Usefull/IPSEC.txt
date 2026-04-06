@@ -1,0 +1,28 @@
+!
+crypto ikev2 proposal OTUS-DMVPN
+ encryption aes-cbc-128
+ integrity sha256
+ group 24
+!
+crypto ikev2 policy OTUS-DMVPN
+ proposal OTUS-DMVPN
+!
+!
+crypto ikev2 profile OTUS-DMVPN
+ match identity remote address 0.0.0.0 
+ authentication remote rsa-sig
+ authentication local rsa-sig
+ pki trustpoint R14
+!
+!
+!
+crypto ipsec transform-set OTUS-DMVPN esp-gcm 256 
+ mode transport
+!
+crypto ipsec profile OTUS-DMVPN
+ set transform-set OTUS-DMVPN 
+ set ikev2-profile OTUS-DMVPN
+!
+ 
+interface Tunnel13
+ tunnel protection ipsec profile OTUS-DMVPN

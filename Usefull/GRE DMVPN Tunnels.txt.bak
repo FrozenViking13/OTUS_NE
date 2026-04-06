@@ -1,0 +1,38 @@
+
+GRE
+
+interface Tunnel0
+ ip address 10.15.18.1 255.255.255.252
+ ip mtu 1400
+ ip tcp adjust-mss 1360
+ tunnel source Ethernet0/2
+ tunnel destination 111.111.111.2
+!
+
+!
+interface Tunnel0
+ ip address 10.15.18.2 255.255.255.252
+ ip mtu 1400
+ ip tcp adjust-mss 1360
+ tunnel source Ethernet0/2
+ tunnel destination 200.0.0.2
+!
+
+DMVPN
+
+interface Tunnel13
+ ip address 10.66.6.1 255.255.255.0
+ no ip redirects
+ ip mtu 1400
+ no ip next-hop-self eigrp 100
+ no ip split-horizon eigrp 100
+ ip nhrp authentication OTUS
+ ip nhrp map multicast dynamic
+ ip nhrp network-id 13
+ ip nhrp registration no-unique
+ ip nhrp redirect
+ ip tcp adjust-mss 1360
+ tunnel source Ethernet0/2
+ tunnel mode gre multipoint
+!
+

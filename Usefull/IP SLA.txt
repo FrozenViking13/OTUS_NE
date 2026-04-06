@@ -1,0 +1,20 @@
+ip sla 1
+ icmp-echo 16.16.16.1 source-ip 16.16.16.2
+ frequency 5
+ip sla schedule 1 life forever start-time now
+!
+ip sla 2
+ icmp-echo 15.15.15.1 source-ip 15.15.15.2
+ frequency 5
+ip sla schedule 2 life forever start-time now
+!
+track 1 ip sla 1 reachability
+track 2 ip sla 2 reachability
+!
+ip route 0.0.0.0 0.0.0.0 16.16.16.1 track 1
+ip route 0.0.0.0 0.0.0.0 15.15.15.1 track 2
+
+ set ip next-hop verify-availability 16.16.16.1 100 track 1
+ set ip next-hop verify-availability 15.15.15.1 150 track 2
+ 
+ int g1/0/16

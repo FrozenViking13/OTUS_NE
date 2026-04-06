@@ -1,0 +1,31 @@
+
+!
+router eigrp 1
+ metric weights 1 0 1 0 0 
+ network 10.0.0.0 0.255.255.255
+ network 172.18.0.0 0.0.255.255
+ network 192.168.255.0 0.0.255.255
+ passive-interface default
+ no passive-interface Ethernet0/0
+ no passive-interface Ethernet0/1
+ no passive-interface Ethernet0/3
+ no passive-interface Ethernet0/2
+ eigrp router-id 3.3.3.3
+
+
+router eigrp 1
+ network 10.0.0.0 
+ network 172.17.0.0 0.0.0.255
+ eigrp router-id 5.5.5.5
+
+router eigrp 1
+ network 10.10.10.0 0.0.0.255
+ network 192.168.255.0 0.0.255.255
+ network 10.5.7.0 0.0.0.255
+ eigrp router-id 5.5.5.5
+
+
+en
+conf t
+router isis 1
+net 49.0100.0000.0000.0011.00
