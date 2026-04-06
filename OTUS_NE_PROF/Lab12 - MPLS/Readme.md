@@ -26,22 +26,21 @@
 
 Что получается:
 
-</code></pre>
-</details>
-<details>
-<summary>R14  </summary>
-<pre><code>
+
+Включаем:
 
 ```
 R14(config)#mpls ip
 R14(config)#int ra e0/0-1
 R14(config-if-range)#mpls ip
-R14(config-if-range)#mpls label pro
 R14(config-if-range)#mpls label protocol ldp
-R14(config-if-range)#
 ```
 
-Проверка
+</code></pre>
+</details>
+<details>
+<summary>R14 Проверка </summary>
+<pre><code>
 ```
 R14#sh mpls int det
 Interface Ethernet0/0:
