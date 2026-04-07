@@ -22,7 +22,7 @@
 Чтобы запустить BGP Free Core нам по сути надо запустить MPLS и LDP на интерфейсах в сторону нашей сети на всех устройствах в AS. iBGP сессии оставить только между бордерами (спасибо Николаю Колесову)
 Действовать будем согласно плану:
 ![](ThisIsAPlan.png)
-Соответтственно, на R14 и R15 включим на интерфейсах E0/0-1, А на R12-13 на интерфейсах E0/2-3
+Соответтственно, на R14 и R15 включим на интерфейсах E0/0-1, E0/3, А на R12-13 на интерфейсах E0/2-3
 
 Что получается:
 
@@ -31,7 +31,7 @@
 
 ```
 R14(config)#mpls ip
-R14(config)#int ra e0/0-1
+R14(config)#int ra e0/0-1, e0/3
 R14(config-if-range)#mpls ip
 R14(config-if-range)#mpls label protocol ldp
 ```
@@ -39,11 +39,11 @@ R14(config-if-range)#mpls label protocol ldp
 </code></pre>
 </details>
 <details>
-<summary>R14 Проверка </summary>
+<summary>R12 Проверка </summary>
 <pre><code>
 
 ```
-R14#sh mpls int det
+R12#sh mpls int det
 Interface Ethernet0/0:
         Type Unknown
         IP labeling enabled (ldp):
@@ -62,204 +62,175 @@ Interface Ethernet0/1:
         BGP labeling not enabled
         MPLS operational
         MTU = 1500
-R14#sh mpls ldp nei
-R14#sh mpls ldp neighbor
-    Peer LDP Ident: 1.1.1.12:0; Local LDP Ident 200.20.20.14:0
-        TCP connection: 1.1.1.12.646 - 200.20.20.14.18412
-        State: Oper; Msgs sent/rcvd: 42/40; Downstream
-        Up time: 00:16:47
+Interface Ethernet0/2:
+        Type Unknown
+        IP labeling enabled (ldp):
+          Interface config
+        LSP Tunnel labeling not enabled
+        IP FRR labeling not enabled
+        BGP labeling not enabled
+        MPLS operational
+        MTU = 1500
+Interface Ethernet0/3:
+        Type Unknown
+        IP labeling enabled (ldp):
+          Interface config
+        LSP Tunnel labeling not enabled
+        IP FRR labeling not enabled
+        BGP labeling not enabled
+        MPLS operational
+        MTU = 1500
+R12#
+R12#sh mpls ldp nei
+R12#sh mpls ldp neighbor
+    Peer LDP Ident: 1.1.1.4:0; Local LDP Ident 1.1.1.12:0
+        TCP connection: 1.1.1.4.646 - 1.1.1.12.50093
+        State: Oper; Msgs sent/rcvd: 21/21; Downstream
+        Up time: 00:00:45
         LDP discovery sources:
-          Ethernet0/0, Src IP addr: 10.10.10.9
+          Ethernet0/0, Src IP addr: 10.10.10.2
         Addresses bound to peer LDP Ident:
-          10.10.10.1      10.10.10.5      10.10.10.9      10.10.10.13
-          1.1.1.12
-    Peer LDP Ident: 1.1.1.13:0; Local LDP Ident 200.20.20.14:0
-        TCP connection: 1.1.1.13.646 - 200.20.20.14.57453
-        State: Oper; Msgs sent/rcvd: 41/40; Downstream
-        Up time: 00:16:19
+          10.10.10.2      10.10.10.22     1.1.1.4         192.168.10.2
+          192.168.20.2    192.168.20.1    192.168.10.1
+    Peer LDP Ident: 1.1.1.5:0; Local LDP Ident 1.1.1.12:0
+        TCP connection: 1.1.1.5.646 - 1.1.1.12.31190
+        State: Oper; Msgs sent/rcvd: 21/21; Downstream
+        Up time: 00:00:44
         LDP discovery sources:
-          Ethernet0/1, Src IP addr: 10.10.10.29
+          Ethernet0/1, Src IP addr: 10.10.10.6
         Addresses bound to peer LDP Ident:
-          10.10.10.17     10.10.10.21     10.10.10.25     10.10.10.29
-          1.1.1.13
-R14#sh mpls ip binding
-  0.0.0.0/0
-        out label:    imp-null  lsr: 1.1.1.12:0
-        out label:    imp-null  lsr: 1.1.1.13:0
-  1.1.1.4/32
-        in label:     16
-        out label:    16        lsr: 1.1.1.12:0       inuse
-        out label:    16        lsr: 1.1.1.13:0       inuse
-  1.1.1.5/32
-        in label:     17
-        out label:    17        lsr: 1.1.1.12:0       inuse
-        out label:    17        lsr: 1.1.1.13:0       inuse
-  1.1.1.12/32
-        in label:     18
-        out label:    imp-null  lsr: 1.1.1.12:0       inuse
-        out label:    18        lsr: 1.1.1.13:0
-  1.1.1.13/32
-        in label:     19
-        out label:    18        lsr: 1.1.1.12:0
-        out label:    imp-null  lsr: 1.1.1.13:0       inuse
-  1.1.1.14/32
-        in label:     imp-null
-        out label:    19        lsr: 1.1.1.12:0
-        out label:    19        lsr: 1.1.1.13:0
-  1.1.1.19/32
-        in label:     20
-        out label:    20        lsr: 1.1.1.12:0
-        out label:    20        lsr: 1.1.1.13:0
-  10.10.10.0/30
-        in label:     21
-        out label:    imp-null  lsr: 1.1.1.12:0       inuse
-        out label:    21        lsr: 1.1.1.13:0
-  10.10.10.4/30
-        in label:     22
-        out label:    imp-null  lsr: 1.1.1.12:0       inuse
-        out label:    22        lsr: 1.1.1.13:0
-  10.10.10.8/30
-        in label:     imp-null
-        out label:    imp-null  lsr: 1.1.1.12:0
-        out label:    23        lsr: 1.1.1.13:0
-  10.10.10.12/30
-        in label:     23
-        out label:    imp-null  lsr: 1.1.1.12:0       inuse
-        out label:    24        lsr: 1.1.1.13:0
-  10.10.10.16/30
-        in label:     24
-        out label:    21        lsr: 1.1.1.12:0
-        out label:    imp-null  lsr: 1.1.1.13:0       inuse
-  10.10.10.20/30
-        in label:     25
-        out label:    22        lsr: 1.1.1.12:0
-        out label:    imp-null  lsr: 1.1.1.13:0       inuse
-  10.10.10.24/30
-        in label:     26
-        out label:    23        lsr: 1.1.1.12:0
-        out label:    imp-null  lsr: 1.1.1.13:0       inuse
-  10.10.10.28/30
-        in label:     imp-null
-        out label:    24        lsr: 1.1.1.12:0
-        out label:    imp-null  lsr: 1.1.1.13:0
-  10.10.10.32/30
-        in label:     imp-null
-        out label:    25        lsr: 1.1.1.12:0
-        out label:    25        lsr: 1.1.1.13:0
-  100.0.0.0/30
-        in label:     imp-null
-  172.16.0.14/32
-        in label:     imp-null
-  192.168.10.0/24
-        in label:     27
-        out label:    26        lsr: 1.1.1.12:0       inuse
-        out label:    26        lsr: 1.1.1.13:0       inuse
-  192.168.20.0/24
-        in label:     28
-        out label:    27        lsr: 1.1.1.12:0       inuse
-        out label:    27        lsr: 1.1.1.13:0       inuse
-  200.20.20.0/22
-        in label:     imp-null
-R14#
-R14#sh mpls ldp bind
-R14#sh mpls ldp bindings
-  lib entry: 0.0.0.0/0, rev 41
-        remote binding: lsr: 1.1.1.12:0, label: imp-null
-        remote binding: lsr: 1.1.1.13:0, label: imp-null
+          10.10.10.18     10.10.10.6      1.1.1.5         192.168.10.3
+          192.168.20.3
+        Duplicate Addresses advertised by peer:
+          192.168.10.1    192.168.20.1
+    Peer LDP Ident: 200.20.20.14:0; Local LDP Ident 1.1.1.12:0
+        TCP connection: 200.20.20.14.60721 - 1.1.1.12.646
+        State: Oper; Msgs sent/rcvd: 21/23; Downstream
+        Up time: 00:00:44
+        LDP discovery sources:
+          Ethernet0/2, Src IP addr: 10.10.10.10
+        Addresses bound to peer LDP Ident:
+          10.10.10.10     10.10.10.30     100.0.0.2       10.10.10.33
+          1.1.1.14        200.20.20.14    200.20.20.19
+R12#
+R12#sh mpls ldp bind
+  lib entry: 0.0.0.0/0, rev 36
+        local binding:  label: imp-null
+        remote binding: lsr: 1.1.1.4:0, label: imp-null
+        remote binding: lsr: 1.1.1.5:0, label: imp-null
   lib entry: 1.1.1.4/32, rev 2
         local binding:  label: 16
-        remote binding: lsr: 1.1.1.12:0, label: 16
-        remote binding: lsr: 1.1.1.13:0, label: 16
+        remote binding: lsr: 1.1.1.4:0, label: imp-null
+        remote binding: lsr: 1.1.1.5:0, label: 16
+        remote binding: lsr: 200.20.20.14:0, label: 16
   lib entry: 1.1.1.5/32, rev 4
         local binding:  label: 17
-        remote binding: lsr: 1.1.1.12:0, label: 17
-        remote binding: lsr: 1.1.1.13:0, label: 17
+        remote binding: lsr: 1.1.1.4:0, label: 16
+        remote binding: lsr: 1.1.1.5:0, label: imp-null
+        remote binding: lsr: 200.20.20.14:0, label: 17
   lib entry: 1.1.1.12/32, rev 6
-        local binding:  label: 18
-        remote binding: lsr: 1.1.1.12:0, label: imp-null
-        remote binding: lsr: 1.1.1.13:0, label: 18
+        local binding:  label: imp-null
+        remote binding: lsr: 1.1.1.4:0, label: 17
+        remote binding: lsr: 1.1.1.5:0, label: 17
+        remote binding: lsr: 200.20.20.14:0, label: 18
   lib entry: 1.1.1.13/32, rev 8
-        local binding:  label: 19
-        remote binding: lsr: 1.1.1.12:0, label: 18
-        remote binding: lsr: 1.1.1.13:0, label: imp-null
-  lib entry: 1.1.1.14/32, rev 10
-        local binding:  label: imp-null
-        remote binding: lsr: 1.1.1.12:0, label: 19
-        remote binding: lsr: 1.1.1.13:0, label: 19
-  lib entry: 1.1.1.19/32, rev 12
-        local binding:  label: 20
-        remote binding: lsr: 1.1.1.12:0, label: 20
-        remote binding: lsr: 1.1.1.13:0, label: 20
-  lib entry: 10.10.10.0/30, rev 14
-        local binding:  label: 21
-        remote binding: lsr: 1.1.1.12:0, label: imp-null
-        remote binding: lsr: 1.1.1.13:0, label: 21
-  lib entry: 10.10.10.4/30, rev 16
-        local binding:  label: 22
-        remote binding: lsr: 1.1.1.12:0, label: imp-null
-        remote binding: lsr: 1.1.1.13:0, label: 22
-  lib entry: 10.10.10.8/30, rev 18
-        local binding:  label: imp-null
-        remote binding: lsr: 1.1.1.12:0, label: imp-null
-        remote binding: lsr: 1.1.1.13:0, label: 23
-  lib entry: 10.10.10.12/30, rev 20
-        local binding:  label: 23
-        remote binding: lsr: 1.1.1.12:0, label: imp-null
-        remote binding: lsr: 1.1.1.13:0, label: 24
-  lib entry: 10.10.10.16/30, rev 22
-        local binding:  label: 24
-        remote binding: lsr: 1.1.1.12:0, label: 21
-        remote binding: lsr: 1.1.1.13:0, label: imp-null
-  lib entry: 10.10.10.20/30, rev 24
+        local binding:  label: 18
+        remote binding: lsr: 1.1.1.4:0, label: 18
+        remote binding: lsr: 1.1.1.5:0, label: 18
+        remote binding: lsr: 200.20.20.14:0, label: 19
+  lib entry: 1.1.1.14/32, rev 30
         local binding:  label: 25
-        remote binding: lsr: 1.1.1.12:0, label: 22
-        remote binding: lsr: 1.1.1.13:0, label: imp-null
-  lib entry: 10.10.10.24/30, rev 26
-        local binding:  label: 26
-        remote binding: lsr: 1.1.1.12:0, label: 23
-        remote binding: lsr: 1.1.1.13:0, label: imp-null
-  lib entry: 10.10.10.28/30, rev 28
-        local binding:  label: imp-null
-        remote binding: lsr: 1.1.1.12:0, label: 24
-        remote binding: lsr: 1.1.1.13:0, label: imp-null
-  lib entry: 10.10.10.32/30, rev 30
-        local binding:  label: imp-null
-        remote binding: lsr: 1.1.1.12:0, label: 25
-        remote binding: lsr: 1.1.1.13:0, label: 25
-  lib entry: 100.0.0.0/30, rev 32
-        local binding:  label: imp-null
-  lib entry: 172.16.0.14/32, rev 34
-        local binding:  label: imp-null
-  lib entry: 192.168.10.0/24, rev 36
+        remote binding: lsr: 1.1.1.4:0, label: 25
+        remote binding: lsr: 1.1.1.5:0, label: 25
+        remote binding: lsr: 200.20.20.14:0, label: imp-null
+  lib entry: 1.1.1.19/32, rev 34
         local binding:  label: 27
-        remote binding: lsr: 1.1.1.12:0, label: 26
-        remote binding: lsr: 1.1.1.13:0, label: 26
-  lib entry: 192.168.20.0/24, rev 38
-        local binding:  label: 28
-        remote binding: lsr: 1.1.1.12:0, label: 27
-        remote binding: lsr: 1.1.1.13:0, label: 27
-  lib entry: 200.20.20.0/22, rev 40
+        remote binding: lsr: 1.1.1.4:0, label: 27
+        remote binding: lsr: 1.1.1.5:0, label: 27
+        remote binding: lsr: 200.20.20.14:0, label: 20
+  lib entry: 10.10.10.0/30, rev 10
         local binding:  label: imp-null
-R14#sh mpls forwarding-table
+        remote binding: lsr: 1.1.1.4:0, label: imp-null
+        remote binding: lsr: 1.1.1.5:0, label: 19
+        remote binding: lsr: 200.20.20.14:0, label: 21
+  lib entry: 10.10.10.4/30, rev 12
+        local binding:  label: imp-null
+        remote binding: lsr: 1.1.1.4:0, label: 19
+        remote binding: lsr: 1.1.1.5:0, label: imp-null
+        remote binding: lsr: 200.20.20.14:0, label: 22
+  lib entry: 10.10.10.8/30, rev 14
+        local binding:  label: imp-null
+        remote binding: lsr: 1.1.1.4:0, label: 20
+        remote binding: lsr: 1.1.1.5:0, label: 20
+        remote binding: lsr: 200.20.20.14:0, label: imp-null
+  lib entry: 10.10.10.12/30, rev 16
+        local binding:  label: imp-null
+        remote binding: lsr: 1.1.1.4:0, label: 21
+        remote binding: lsr: 1.1.1.5:0, label: 21
+        remote binding: lsr: 200.20.20.14:0, label: 23
+  lib entry: 10.10.10.16/30, rev 18
+        local binding:  label: 19
+        remote binding: lsr: 1.1.1.4:0, label: 22
+        remote binding: lsr: 1.1.1.5:0, label: imp-null
+        remote binding: lsr: 200.20.20.14:0, label: 24
+  lib entry: 10.10.10.20/30, rev 20
+        local binding:  label: 20
+        remote binding: lsr: 1.1.1.4:0, label: imp-null
+        remote binding: lsr: 1.1.1.5:0, label: 22
+        remote binding: lsr: 200.20.20.14:0, label: 25
+  lib entry: 10.10.10.24/30, rev 22
+        local binding:  label: 21
+        remote binding: lsr: 1.1.1.4:0, label: 23
+        remote binding: lsr: 1.1.1.5:0, label: 23
+        remote binding: lsr: 200.20.20.14:0, label: 26
+  lib entry: 10.10.10.28/30, rev 24
+        local binding:  label: 22
+        remote binding: lsr: 1.1.1.4:0, label: 24
+        remote binding: lsr: 1.1.1.5:0, label: 24
+        remote binding: lsr: 200.20.20.14:0, label: imp-null
+  lib entry: 10.10.10.32/30, rev 32
+        local binding:  label: 26
+        remote binding: lsr: 1.1.1.4:0, label: 26
+        remote binding: lsr: 1.1.1.5:0, label: 26
+        remote binding: lsr: 200.20.20.14:0, label: imp-null
+  lib entry: 100.0.0.0/30, rev 40
+        remote binding: lsr: 200.20.20.14:0, label: imp-null
+  lib entry: 172.16.0.14/32, rev 41
+        remote binding: lsr: 200.20.20.14:0, label: imp-null
+  lib entry: 192.168.10.0/24, rev 26
+        local binding:  label: 23
+        remote binding: lsr: 1.1.1.4:0, label: imp-null
+        remote binding: lsr: 1.1.1.5:0, label: imp-null
+        remote binding: lsr: 200.20.20.14:0, label: 27
+  lib entry: 192.168.20.0/24, rev 28
+        local binding:  label: 24
+        remote binding: lsr: 1.1.1.4:0, label: imp-null
+        remote binding: lsr: 1.1.1.5:0, label: imp-null
+        remote binding: lsr: 200.20.20.14:0, label: 28
+  lib entry: 200.20.20.0/22, rev 42
+        remote binding: lsr: 200.20.20.14:0, label: imp-null
+R12#
+R12#
+R12#sh mpls fo
+R12#sh mpls forwarding-table
 Local      Outgoing   Prefix           Bytes Label   Outgoing   Next Hop
 Label      Label      or Tunnel Id     Switched      interface
-16         16         1.1.1.4/32       0             Et0/0      10.10.10.9
-           16         1.1.1.4/32       0             Et0/1      10.10.10.29
-17         17         1.1.1.5/32       0             Et0/0      10.10.10.9
-           17         1.1.1.5/32       0             Et0/1      10.10.10.29
-18         Pop Label  1.1.1.12/32      0             Et0/0      10.10.10.9
-19         Pop Label  1.1.1.13/32      0             Et0/1      10.10.10.29
-20         No Label   1.1.1.19/32      0             Et0/3      10.10.10.34
-21         Pop Label  10.10.10.0/30    0             Et0/0      10.10.10.9
-22         Pop Label  10.10.10.4/30    0             Et0/0      10.10.10.9
-23         Pop Label  10.10.10.12/30   0             Et0/0      10.10.10.9
-24         Pop Label  10.10.10.16/30   0             Et0/1      10.10.10.29
-25         Pop Label  10.10.10.20/30   0             Et0/1      10.10.10.29
-26         Pop Label  10.10.10.24/30   0             Et0/1      10.10.10.29
-27         26         192.168.10.0/24  0             Et0/0      10.10.10.9
-           26         192.168.10.0/24  0             Et0/1      10.10.10.29
-28         27         192.168.20.0/24  0             Et0/0      10.10.10.9
-           27         192.168.20.0/24  0             Et0/1      10.10.10.29
+16         Pop Label  1.1.1.4/32       0             Et0/0      10.10.10.2
+17         Pop Label  1.1.1.5/32       0             Et0/1      10.10.10.6
+18         18         1.1.1.13/32      0             Et0/0      10.10.10.2
+           18         1.1.1.13/32      0             Et0/1      10.10.10.6
+19         Pop Label  10.10.10.16/30   0             Et0/1      10.10.10.6
+20         Pop Label  10.10.10.20/30   0             Et0/0      10.10.10.2
+21         26         10.10.10.24/30   0             Et0/2      10.10.10.10
+22         Pop Label  10.10.10.28/30   0             Et0/2      10.10.10.10
+23         Pop Label  192.168.10.0/24  0             Et0/0      10.10.10.2
+           Pop Label  192.168.10.0/24  0             Et0/1      10.10.10.6
+24         Pop Label  192.168.20.0/24  0             Et0/0      10.10.10.2
+           Pop Label  192.168.20.0/24  0             Et0/1      10.10.10.6
+25         Pop Label  1.1.1.14/32      0             Et0/2      10.10.10.10
+26         Pop Label  10.10.10.32/30   0             Et0/2      10.10.10.10
+27         20         1.1.1.19/32      0             Et0/2      10.10.10.10
+R12#
 
 ```
 
