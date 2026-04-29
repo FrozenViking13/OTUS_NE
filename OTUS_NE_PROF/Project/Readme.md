@@ -80,35 +80,61 @@ crypto isakmp policy 1
 encr aes
 authentication pre-share
 
-crypto isakmp key CISCO address 200.0.0.1
+crypto isakmp key CISCO address 10.42.62.2
 
 crypto ipsec transform-set AES128-SHA esp-aes esp-sha-hmac
 
 crypto map MAP1 10 ipsec-isakmp
-set peer 200.0.0.1
+set peer 10.42.62.2
 set transform-set AES128-SHA
 match address 101
 
-access-list 101 permit ip host 10.0.0.0 host 10.1.1.0
 
-interface FastEthernet0/0
+
+interface e0/0
 crypto map MAP1
 
 
 crypto isakmp policy 1
 encr aes
 authentication pre-share
-crypto isakmp key CISCO address 100.0.0.1
+crypto isakmp key CISCO address 10.51.61.1
 !
 !
 crypto ipsec transform-set AES128-SHA esp-aes esp-sha-hmac
 !
 crypto map MAP1 10 ipsec-isakmp
-set peer 100.0.0.1
+set peer 10.51.61.1
 set transform-set AES128-SHA
 match address 101
 
-interface FastEthernet0/1
+interface e0/2
 crypto map MAP1
 
+access-list 101 permit ip any any
+
+
+
+
 access-list 101 permit ip host 10.1.1.0 host 10.0.0.0
+
+
+R10
+!
+interface Tunnel0
+ ip address 3.3.3.10 255.255.255.0
+ ip mtu 1400
+ ip tcp adjust-mss 1360
+ tunnel source Ethernet0/0
+ tunnel destination 10.42.62.2
+end
+
+R6
+!
+interface Tunnel0
+ ip address 3.3.3.6 255.255.255.0
+ ip mtu 1400
+ ip tcp adjust-mss 1360
+ tunnel source Ethernet0/2
+ tunnel destination 10.42.51.2
+end
