@@ -72,3 +72,43 @@ exit
 interface port-channel 1 
 switchport trunk encapsulation dot1q
 switchport mode trunk
+
+
+
+
+crypto isakmp policy 1
+encr aes
+authentication pre-share
+
+crypto isakmp key CISCO address 200.0.0.1
+
+crypto ipsec transform-set AES128-SHA esp-aes esp-sha-hmac
+
+crypto map MAP1 10 ipsec-isakmp
+set peer 200.0.0.1
+set transform-set AES128-SHA
+match address 101
+
+access-list 101 permit ip host 10.0.0.0 host 10.1.1.0
+
+interface FastEthernet0/0
+crypto map MAP1
+
+
+crypto isakmp policy 1
+encr aes
+authentication pre-share
+crypto isakmp key CISCO address 100.0.0.1
+!
+!
+crypto ipsec transform-set AES128-SHA esp-aes esp-sha-hmac
+!
+crypto map MAP1 10 ipsec-isakmp
+set peer 100.0.0.1
+set transform-set AES128-SHA
+match address 101
+
+interface FastEthernet0/1
+crypto map MAP1
+
+access-list 101 permit ip host 10.1.1.0 host 10.0.0.0
