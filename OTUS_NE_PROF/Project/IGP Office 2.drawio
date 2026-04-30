@@ -139,6 +139,27 @@
         <mxCell id="t05eS42qsrE5vrNr36cQ-5" value="ISP3" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="852" y="11" width="40" height="30" as="geometry" />
         </mxCell>
+        <mxCell id="L7Tj3FnrMd_7uWvSMX70-1" value="" style="strokeColor=#ffffff;sketch=0;html=1;pointerEvents=1;dashed=0;fillColor=#036897;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;shape=mxgraph.cisco.routers.router;" vertex="1" parent="1">
+          <mxGeometry x="1094" y="527" width="78" height="53" as="geometry" />
+        </mxCell>
+        <mxCell id="L7Tj3FnrMd_7uWvSMX70-2" value="" style="endArrow=none;html=1;rounded=0;exitX=0.88;exitY=0.9;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="L7Tj3FnrMd_7uWvSMX70-4" target="L7Tj3FnrMd_7uWvSMX70-1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="917" y="29" as="sourcePoint" />
+            <mxPoint x="980" y="12" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="L7Tj3FnrMd_7uWvSMX70-3" value="R31" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1108" y="493" width="40" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="L7Tj3FnrMd_7uWvSMX70-5" value="" style="endArrow=none;html=1;rounded=0;exitX=0.88;exitY=0.9;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="-AU68JlGJ06m-Rxs-8Np-3" target="L7Tj3FnrMd_7uWvSMX70-4">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="999" y="498" as="sourcePoint" />
+            <mxPoint x="1094" y="537" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="L7Tj3FnrMd_7uWvSMX70-4" value="eBGP" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;" vertex="1" parent="1">
+          <mxGeometry x="1031" y="503" width="40" height="30" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
